@@ -14,10 +14,33 @@
 
 // Porter2 implements the english Porter2 stemmer. It is written completely using
 // finite state machines to do suffix comparison, rather than the string-based
-// or tree-based approaches. As a result, it is 600% faster compare to string-based
+// or tree-based approaches. As a result, it is 660% faster compare to string-based
 // implementations.
 //
 // http://snowball.tartarus.org/algorithms/english/stemmer.html
+//
+// This implementation has been successfully validated with the dataset from
+// http://snowball.tartarus.org/algorithms/english/
+//
+// Most of the implementations rely completely on suffix string comparison.
+// Basically there's a list of suffixes, and the code will loop through the
+// list to see if there's a match. Given most of the time you are looking for
+// the longest match, so you order the list so the longest is the first one.
+// So if you are luckly, the match will be early on the list. But regardless
+// that's a huge performance hit.
+//
+// This implementation is based completely on finite state machines to perform
+// suffix comparison. You compare each chacter of the string starting at the
+// last character going backwards. The state machines at each step will
+// determine what the longest suffix is. You can think of the state machine
+// as an unrolled tree.
+//
+// However, writing large state machines can be very error-prone. So I wrote
+// a [quick tool](https://github.com/surgebase/porter2/tree/master/cmd/suffixfsm)
+// to generate most of the state machines. The tool basically takes a file of
+// suffixes, creates a tree, then unrolls the tree by dumping each of the nodes.
+//
+// You can run the tool by `go run suffixfsm.go <filename>`.
 package porter2
 
 import "unicode"
