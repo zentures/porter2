@@ -1,6 +1,8 @@
 porter2
 =======
 
+[![GoDoc](http://godoc.org/github.com/surgebase/porter2?status.svg)](http://godoc.org/github.com/surgebase/porter2)
+
 Porter2 implements the [english Porter2 stemmer](http://snowball.tartarus.org/algorithms/english/stemmer.html). It is written completely using finite state machines to do suffix comparison, rather than the string-based or tree-based approaches. As a result, it is 660% faster compare to string comparison-based approach.
 
 ```
