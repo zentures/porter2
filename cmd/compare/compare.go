@@ -1,12 +1,28 @@
+// Copyright (c) 2014 Dataence, LLC. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package main
 
 import (
 	"fmt"
 	"time"
 
-	"github.com/dchest/stemmer/porter2"
-	"github.com/reiver/go-porterstemmer"
-	p2 "github.com/surgebase/porter2"
+	agonopol "github.com/agonopol/go-stem"
+	dchest "github.com/dchest/stemmer/porter2"
+	kljensen "github.com/kljensen/snowball"
+	reiver "github.com/reiver/go-porterstemmer"
+	surgebase "github.com/surgebase/porter2"
 )
 
 func main() {
@@ -74,25 +90,23 @@ func main() {
 
 	n := 10000
 
-	var es p2.EnglishStemmer
-
 	now := time.Now()
 
 	for i := 0; i < n; i++ {
 		for _, a := range actions {
-			es.Stem(a)
+			surgebase.Stem(a)
 		}
 	}
 
 	since := time.Since(now)
-	fmt.Println("surge:", since)
+	fmt.Println("surgebase:", since)
 
 	//eng := porter2.Stemmer
 	now = time.Now()
 
 	for i := 0; i < n; i++ {
 		for _, a := range actions {
-			porter2.EngStem.Stem(a)
+			dchest.Stemmer.Stem(a)
 		}
 	}
 
@@ -103,10 +117,32 @@ func main() {
 
 	for i := 0; i < n; i++ {
 		for _, a := range actions {
-			porterstemmer.StemString(a)
+			reiver.StemString(a)
 		}
 	}
 
 	since = time.Since(now)
 	fmt.Println("reiver:", since)
+
+	now = time.Now()
+
+	for i := 0; i < n; i++ {
+		for _, a := range actions {
+			kljensen.Stem(a, "english", true)
+		}
+	}
+
+	since = time.Since(now)
+	fmt.Println("kljensen:", since)
+
+	now = time.Now()
+
+	for i := 0; i < n; i++ {
+		for _, a := range actions {
+			agonopol.Stem([]byte(a))
+		}
+	}
+
+	since = time.Since(now)
+	fmt.Println("agonopol:", since)
 }

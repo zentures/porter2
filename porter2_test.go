@@ -316,82 +316,74 @@ var (
 )
 
 func TestEnglishStep0(t *testing.T) {
-	var es EnglishStemmer
 
 	for i, rs := range data0 {
 		//glog.Debugf("rs=%q, expected=%q", string(rs), string(expect[i]))
-		assert.Equal(t, false, es.step0(rs), expect0[i])
+		assert.Equal(t, false, step0(rs), expect0[i])
 	}
 }
 
 func TestEnglishStep1a(t *testing.T) {
-	var es EnglishStemmer
 
 	for i, rs := range data1a {
-		assert.Equal(t, false, es.step1a(rs), expect1a[i])
+		assert.Equal(t, false, step1a(rs), expect1a[i])
 		//glog.Debugf("rs=%q, expected=%q, got=%q", string(rs), string(expect1a[i]), string(s))
 	}
 }
 
 func TestEnglishStep1b(t *testing.T) {
-	var es EnglishStemmer
 
 	for i, rs := range data1b {
 		r1, _ := markR1R2(rs)
 		//glog.Debugf("rs=%q, expected=%q, r1=%d", string(rs), string(expect1b[i]), r1)
-		s := es.step1b(rs, r1)
+		s := step1b(rs, r1)
 		assert.Equal(t, true, s, expect1b[i])
 	}
 }
 
 func TestEnglishStep1c(t *testing.T) {
-	var es EnglishStemmer
 
 	for i, rs := range data1c {
-		//glog.Debugf("rs=%q, expected=%q, got=%q", string(rs), string(expect1c[i]), string(es.step1c(rs)))
-		assert.Equal(t, false, es.step1c(rs), expect1c[i])
+		//glog.Debugf("rs=%q, expected=%q, got=%q", string(rs), string(expect1c[i]), string(step1c(rs)))
+		assert.Equal(t, false, step1c(rs), expect1c[i])
 	}
 }
 
 func TestEnglishStep2(t *testing.T) {
-	var es EnglishStemmer
 
 	for i, rs := range data2 {
 		r1, _ := markR1R2(rs)
-		s := es.step2(rs, r1)
+		s := step2(rs, r1)
 		//glog.Debugf("rs=%q, expected=%q, got=%q, r1=%d", string(rs), string(expect2[i]), string(s), r1)
 		assert.Equal(t, false, s, expect2[i])
 	}
 }
 
 func TestEnglishStep3(t *testing.T) {
-	var es EnglishStemmer
 
 	for i, rs := range data3 {
 		r1, r2 := markR1R2(rs)
-		s := es.step3(rs, r1, r2)
+		s := step3(rs, r1, r2)
 		//glog.Debugf("rs=%q, expected=%q, got=%q, r1=%d", string(rs), string(expect3[i]), string(s), r1)
 		assert.Equal(t, true, s, expect3[i])
 	}
 }
 
 func TestEnglishStep4(t *testing.T) {
-	var es EnglishStemmer
 
 	for i, rs := range data4 {
 		_, r2 := markR1R2(rs)
-		s := es.step4(rs, r2)
+		s := step4(rs, r2)
 		//glog.Debugf("rs=%q, expected=%q, got=%q, r1=%d, r2=%d", string(rs), string(expect4[i]), string(s), r1, r2)
 		assert.Equal(t, true, s, expect4[i])
 	}
 }
 
 func TestEnglishStep5(t *testing.T) {
-	var es EnglishStemmer
 
 	for i, rs := range data5 {
 		r1, r2 := markR1R2(rs)
-		s := es.step5(rs, r1, r2)
+		s := step5(rs, r1, r2)
 		//glog.Debugf("rs=%q, expected=%q, got=%q, r1=%d, r2=%d", string(rs), string(expect5[i]), string(s), r1, r2)
 		assert.Equal(t, true, s, expect5[i])
 	}
@@ -416,10 +408,9 @@ func TestEnglishIsShortWord(t *testing.T) {
 }
 
 func TestEnglishExceptions1(t *testing.T) {
-	var es EnglishStemmer
 
 	for k, v := range exceptions1 {
-		rs, ex := es.exception1([]rune(k))
+		rs, ex := exception1([]rune(k))
 		//glog.Debugf("rs=%q, expected=%q, got=%q", k, v, string(rs))
 		assert.True(t, false, ex)
 		assert.Equal(t, false, []rune(v), rs)
@@ -428,35 +419,31 @@ func TestEnglishExceptions1(t *testing.T) {
 }
 
 func TestEnglishExceptions2(t *testing.T) {
-	var es EnglishStemmer
 
 	for k, v := range exceptions2 {
-		assert.Equal(t, true, v, es.exception2([]rune(k)))
+		assert.Equal(t, true, v, exception2([]rune(k)))
 	}
 }
 
 func TestEnglishStem(t *testing.T) {
-	var es EnglishStemmer
 
-	glog.Debugf("%s", es.Stem("seaweed"))
+	glog.Debugf("%s", Stem("seaweed"))
 }
 
 func BenchmarkEnglishStep0(b *testing.B) {
-	var es EnglishStemmer
 
 	for i := 0; i < b.N; i++ {
 		for _, rs := range data0 {
-			es.step0(rs)
+			step0(rs)
 		}
 	}
 }
 
 func BenchmarkEnglishStep1a(b *testing.B) {
-	var es EnglishStemmer
 
 	for i := 0; i < b.N; i++ {
 		for _, rs := range data1a {
-			es.step0(rs)
+			step0(rs)
 		}
 	}
 }
@@ -470,11 +457,9 @@ func BenchmarkEnglishException1(b *testing.B) {
 
 	b.ResetTimer()
 
-	var es EnglishStemmer
-
 	for i := 0; i < b.N; i++ {
 		for _, k := range words {
-			es.exception1(k)
+			exception1(k)
 		}
 	}
 }
@@ -485,8 +470,6 @@ func TestEnglishVocOutput(t *testing.T) {
 	defer infile.Close()
 	defer outfile.Close()
 
-	var es EnglishStemmer
-
 	for inscan.Scan() {
 		if !outscan.Scan() {
 			break
@@ -495,7 +478,7 @@ func TestEnglishVocOutput(t *testing.T) {
 		word := inscan.Text()
 		expect := outscan.Text()
 		//glog.Debugf("word=%q, expect=%q", word, expect)
-		actual := es.Stem(word)
+		actual := Stem(word)
 		if actual != expect {
 			glog.Debugf("word=%q, actual=%q != expect=%q", word, actual, expect)
 		}

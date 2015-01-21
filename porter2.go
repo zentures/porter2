@@ -12,15 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Porter2 implements the english Porter2 stemmer. It is written completely using
+// finite state machines to do suffix comparison, rather than the string-based
+// or tree-based approaches. As a result, it is 600% faster compare to string-based
+// implementations.
+//
+// http://snowball.tartarus.org/algorithms/english/stemmer.html
 package porter2
 
 import "unicode"
 
-type EnglishStemmer bool
-
-var _ Stemmer = (*EnglishStemmer)(nil)
-
-func (this EnglishStemmer) Stem(s string) string {
+// Stem takes a string and returns the stemmed version based on the Porter2 algorithm.
+func Stem(s string) string {
 	// If the word has two letters or less, leave it as it is.
 	if len(s) <= 2 {
 		return s
@@ -35,25 +38,25 @@ func (this EnglishStemmer) Stem(s string) string {
 	var ex bool
 
 	// exception1 word list
-	if rs, ex = this.exception1(rs); ex {
+	if rs, ex = exception1(rs); ex {
 		return string(rs)
 	}
 
-	rs = this.preclude(rs)
+	rs = preclude(rs)
 
 	r1, r2 := markR1R2(rs)
 
-	rs = this.step1a(this.step0(rs))
+	rs = step1a(step0(rs))
 
-	if this.exception2(rs) {
+	if exception2(rs) {
 		return string(rs)
 	}
 
-	return string(this.postlude(this.step5(this.step4(this.step3(this.step2(this.step1c(this.step1b(rs, r1)), r1), r1, r2), r2), r1, r2)))
+	return string(postlude(step5(step4(step3(step2(step1c(step1b(rs, r1)), r1), r1, r2), r2), r1, r2)))
 }
 
 // Remove initial ', if present. Then set initial y, or y after a vowel, to Y.
-func (this EnglishStemmer) preclude(rs []rune) []rune {
+func preclude(rs []rune) []rune {
 	if rs[0] == '\'' {
 		rs = rs[1:]
 	}
@@ -124,7 +127,7 @@ func markRegion(rs []rune) int {
 // '
 // 's
 // 's'
-func (this EnglishStemmer) step0(rs []rune) []rune {
+func step0(rs []rune) []rune {
 	var (
 		l int  = len(rs) // string length
 		m int            // suffix length
@@ -198,7 +201,7 @@ loop:
 //     s : delete if the preceding word part contains a vowel not immediately before the s (so gas and this retain the s, gaps and kiwis lose it)
 //    us : do nothing
 //    ss : do nothing
-func (this EnglishStemmer) step1a(rs []rune) []rune {
+func step1a(rs []rune) []rune {
 	var (
 		l int  = len(rs) // string length
 		m int            // suffix length
@@ -330,7 +333,7 @@ loop:
 //       if the word ends at, bl or iz add e (so luxuriat -> luxuriate), or
 //       if the word ends with a double remove the last letter (so hopp -> hop), or
 //       if the word is short, add e (so hop -> hope)
-func (this EnglishStemmer) step1b(rs []rune, r1 int) []rune {
+func step1b(rs []rune, r1 int) []rune {
 	var (
 		l int  = len(rs) // string length
 		m int            // suffix length
@@ -508,7 +511,7 @@ switch1b:
 
 // Replace suffix y or Y by i if preceded by a non-vowel which is not the first letter
 // of the word (so cry -> cri, by -> by, say -> say)
-func (this EnglishStemmer) step1c(rs []rune) []rune {
+func step1c(rs []rune) []rune {
 	l := len(rs)
 
 	if l > 2 {
@@ -550,7 +553,7 @@ func (this EnglishStemmer) step1c(rs []rune) []rune {
 //  22.   fulli -> replace by ful
 //  23.  lessli -> replace by less
 //  24.      li -> delete if preceded by a valid li-ending
-func (this EnglishStemmer) step2(rs []rune, r1 int) []rune {
+func step2(rs []rune, r1 int) []rune {
 	var (
 		l int  = len(rs) // string length
 		m int            // suffix length
@@ -1128,7 +1131,7 @@ loop:
 // 7.     ful -> delete
 // 8.    ness -> delete
 // 9.   ative -> delete if in R2
-func (this EnglishStemmer) step3(rs []rune, r1, r2 int) []rune {
+func step3(rs []rune, r1, r2 int) []rune {
 	var (
 		l int  = len(rs) // string length
 		m int            // suffix length
@@ -1432,7 +1435,7 @@ loop:
 //  16.  ment -> delete
 //  17.   ous -> delete
 //  18.   ion -> delete if preceded by s or t
-func (this EnglishStemmer) step4(rs []rune, r2 int) []rune {
+func step4(rs []rune, r2 int) []rune {
 	var (
 		l int  = len(rs) // string length
 		m int            // suffix length
@@ -1745,7 +1748,7 @@ loop:
 //
 // e -> delete if in R2, or in R1 and not preceded by a short syllable
 // l -> delete if in R2 and preceded by l
-func (this EnglishStemmer) step5(rs []rune, r1, r2 int) []rune {
+func step5(rs []rune, r1, r2 int) []rune {
 	l := len(rs)
 	if l < 1 {
 		return rs
@@ -1779,7 +1782,7 @@ func (this EnglishStemmer) step5(rs []rune, r1, r2 int) []rune {
 }
 
 // Finally, turn any remaining Y letters in the word back into lower case.
-func (this EnglishStemmer) postlude(rs []rune) []rune {
+func postlude(rs []rune) []rune {
 	for i, r := range rs {
 		if r == 'Y' {
 			rs[i] = 'y'
@@ -1813,7 +1816,7 @@ func (this EnglishStemmer) postlude(rs []rune) []rune {
 //  sky -> sky
 //  tying -> tie
 //  ugly -> ugli
-func (this EnglishStemmer) exception1(rs []rune) ([]rune, bool) {
+func exception1(rs []rune) ([]rune, bool) {
 	l := len(rs)
 	if l > 6 {
 		return rs, false
@@ -1952,7 +1955,7 @@ func (this EnglishStemmer) exception1(rs []rune) ([]rune, bool) {
 // proceed
 //  exceed
 // succeed
-func (this EnglishStemmer) exception2(rs []rune) bool {
+func exception2(rs []rune) bool {
 	l := len(rs)
 	if l != 6 && l != 7 {
 		return false
