@@ -214,7 +214,7 @@ loop:
 		rs = rs[:l-m]
 	}
 
-	return rs[:l-m]
+	return rs
 }
 
 // Search for the longest suffix among the suffixes, and perform the action indicated.

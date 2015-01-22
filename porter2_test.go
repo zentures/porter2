@@ -22,7 +22,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/surgebase/assert"
+	"github.com/stretchr/testify/assert"
 	"github.com/surgebase/glog"
 )
 
@@ -319,14 +319,14 @@ func TestEnglishStep0(t *testing.T) {
 
 	for i, rs := range data0 {
 		//glog.Debugf("rs=%q, expected=%q", string(rs), string(expect[i]))
-		assert.Equal(t, false, step0(rs), expect0[i])
+		assert.Equal(t, step0(rs), expect0[i])
 	}
 }
 
 func TestEnglishStep1a(t *testing.T) {
 
 	for i, rs := range data1a {
-		assert.Equal(t, false, step1a(rs), expect1a[i])
+		assert.Equal(t, step1a(rs), expect1a[i])
 		//glog.Debugf("rs=%q, expected=%q, got=%q", string(rs), string(expect1a[i]), string(s))
 	}
 }
@@ -337,7 +337,7 @@ func TestEnglishStep1b(t *testing.T) {
 		r1, _ := markR1R2(rs)
 		//glog.Debugf("rs=%q, expected=%q, r1=%d", string(rs), string(expect1b[i]), r1)
 		s := step1b(rs, r1)
-		assert.Equal(t, true, s, expect1b[i])
+		assert.Equal(t, s, expect1b[i])
 	}
 }
 
@@ -345,7 +345,7 @@ func TestEnglishStep1c(t *testing.T) {
 
 	for i, rs := range data1c {
 		//glog.Debugf("rs=%q, expected=%q, got=%q", string(rs), string(expect1c[i]), string(step1c(rs)))
-		assert.Equal(t, false, step1c(rs), expect1c[i])
+		assert.Equal(t, step1c(rs), expect1c[i])
 	}
 }
 
@@ -355,7 +355,7 @@ func TestEnglishStep2(t *testing.T) {
 		r1, _ := markR1R2(rs)
 		s := step2(rs, r1)
 		//glog.Debugf("rs=%q, expected=%q, got=%q, r1=%d", string(rs), string(expect2[i]), string(s), r1)
-		assert.Equal(t, false, s, expect2[i])
+		assert.Equal(t, s, expect2[i])
 	}
 }
 
@@ -365,7 +365,7 @@ func TestEnglishStep3(t *testing.T) {
 		r1, r2 := markR1R2(rs)
 		s := step3(rs, r1, r2)
 		//glog.Debugf("rs=%q, expected=%q, got=%q, r1=%d", string(rs), string(expect3[i]), string(s), r1)
-		assert.Equal(t, true, s, expect3[i])
+		assert.Equal(t, s, expect3[i])
 	}
 }
 
@@ -375,7 +375,7 @@ func TestEnglishStep4(t *testing.T) {
 		_, r2 := markR1R2(rs)
 		s := step4(rs, r2)
 		//glog.Debugf("rs=%q, expected=%q, got=%q, r1=%d, r2=%d", string(rs), string(expect4[i]), string(s), r1, r2)
-		assert.Equal(t, true, s, expect4[i])
+		assert.Equal(t, s, expect4[i])
 	}
 }
 
@@ -385,7 +385,7 @@ func TestEnglishStep5(t *testing.T) {
 		r1, r2 := markR1R2(rs)
 		s := step5(rs, r1, r2)
 		//glog.Debugf("rs=%q, expected=%q, got=%q, r1=%d, r2=%d", string(rs), string(expect5[i]), string(s), r1, r2)
-		assert.Equal(t, true, s, expect5[i])
+		assert.Equal(t, s, expect5[i])
 	}
 }
 
@@ -393,7 +393,7 @@ func TestEnglishMarkR1R2(t *testing.T) {
 	for i, rs := range dataRegions {
 		r1, r2 := markR1R2(rs)
 		//glog.Debugf("rs = %v, expected = %v, got = %v", rs, expectRegions[i], []int{r1, r2})
-		assert.Equal(t, false, expectRegions[i], []int{r1, r2})
+		assert.Equal(t, expectRegions[i], []int{r1, r2})
 	}
 
 }
@@ -403,7 +403,7 @@ func TestEnglishIsShortWord(t *testing.T) {
 		rs := []rune(s)
 		r1, _ := markR1R2(rs)
 		//glog.Debugf("rs=%q, r1=%d", s, r1)
-		assert.Equal(t, false, v, isShortWord(rs, r1))
+		assert.Equal(t, v, isShortWord(rs, r1))
 	}
 }
 
@@ -412,8 +412,8 @@ func TestEnglishExceptions1(t *testing.T) {
 	for k, v := range exceptions1 {
 		rs, ex := exception1([]rune(k))
 		//glog.Debugf("rs=%q, expected=%q, got=%q", k, v, string(rs))
-		assert.True(t, false, ex)
-		assert.Equal(t, false, []rune(v), rs)
+		assert.True(t, ex)
+		assert.Equal(t, []rune(v), rs)
 	}
 
 }
@@ -421,14 +421,15 @@ func TestEnglishExceptions1(t *testing.T) {
 func TestEnglishExceptions2(t *testing.T) {
 
 	for k, v := range exceptions2 {
-		assert.Equal(t, true, v, exception2([]rune(k)))
+		assert.Equal(t, v, exception2([]rune(k)))
 	}
 }
 
+/*
 func TestEnglishStem(t *testing.T) {
-
-	glog.Debugf("%s", Stem("seaweed"))
+	fmt.Println(Stem("failure"))
 }
+*/
 
 func BenchmarkEnglishStep0(b *testing.B) {
 
@@ -482,7 +483,7 @@ func TestEnglishVocOutput(t *testing.T) {
 		if actual != expect {
 			glog.Debugf("word=%q, actual=%q != expect=%q", word, actual, expect)
 		}
-		assert.Equal(t, true, expect, actual)
+		assert.Equal(t, expect, actual)
 	}
 }
 

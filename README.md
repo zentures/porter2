@@ -21,9 +21,7 @@ This implementation by far has the highest performance of the various Go-based i
 |----------------|------|-----------|
 | [surgebase](https://github.com/surgebase/porter2) | 319.009358ms | Porter2 |
 | [dchest](https://github.com/dchest/stemmer) | 2.106912401s | Porter2 |
-| [reiver](https://github.com/reiver/go-porterstemmer) | 469.305709ms | Porter |
-| [kljensen](https://github.com/kljensen/snowball) | 5.725917198s | Porter |
-| [agonopol](https://github.com/agonopol/go-stem) | 3.991158277s | Porter |
+| [kljensen](https://github.com/kljensen/snowball) | 5.725917198s | Porter2 |
 
 To run the test again, you can run cmd/compare/compare.go (`go run compare.go`).
 
