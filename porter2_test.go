@@ -23,7 +23,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/surgebase/glog"
+	"github.com/surge/glog"
 )
 
 var (
@@ -84,6 +84,9 @@ var (
 		[]rune("fizzed"),
 		[]rune("failing"),
 		[]rune("filing"),
+		[]rune("aed"),
+		[]rune("aing"),
+		[]rune("eing"),
 	}
 
 	expect1b [][]rune = [][]rune{
@@ -103,6 +106,9 @@ var (
 		[]rune("fizz"),
 		[]rune("fail"),
 		[]rune("file"),
+		[]rune("a"),
+		[]rune("a"),
+		[]rune("e"),
 	}
 
 	data1c [][]rune = [][]rune{

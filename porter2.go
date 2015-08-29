@@ -493,20 +493,22 @@ switch1b:
 		}
 		rs = rs[:l-m]
 
-		r, rr := rs[len(rs)-1], rs[len(rs)-2]
+		if len(rs) > 2 {
+			r, rr := rs[len(rs)-1], rs[len(rs)-2]
 
-		// if the word ends at, bl or iz add e (so luxuriat -> luxuriate)
-		if (rr == 'a' && r == 't') || (rr == 'b' && r == 'l') || (rr == 'i' && r == 'z') {
-			rs = append(rs, 'e')
-			break switch1b
-		}
-
-		// if the word ends with a double remove the last letter (so hopp -> hop)
-		switch r {
-		case 'b', 'd', 'f', 'g', 'm', 'n', 'p', 'r', 't':
-			if r == rr {
-				rs = rs[:len(rs)-1]
+			// if the word ends at, bl or iz add e (so luxuriat -> luxuriate)
+			if (rr == 'a' && r == 't') || (rr == 'b' && r == 'l') || (rr == 'i' && r == 'z') {
+				rs = append(rs, 'e')
 				break switch1b
+			}
+
+			// if the word ends with a double remove the last letter (so hopp -> hop)
+			if r == rr {
+				switch r {
+				case 'b', 'd', 'f', 'g', 'm', 'n', 'p', 'r', 't':
+					rs = rs[:len(rs)-1]
+					break switch1b
+				}
 			}
 		}
 
